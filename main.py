@@ -1,0 +1,59 @@
+import pandas
+import numpy
+inf_sheet = pandas.read_excel('excel.xlsx',sheet_name='Influencers',skiprows=[0])
+media_sheet = pandas.read_excel('excel.xlsx',sheet_name='Media Contacts',skiprows=[0])
+
+
+
+
+def save():
+    header = ['General', 'Unnamed: 1', 'Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4',
+       'Unnamed: 5', 'Unnamed: 6', 'TangiPlay', 'Unnamed: 8', 'Youtube',
+       'Unnamed: 10', 'Unnamed: 11', 'Unnamed: 12', 'Instagram', 'Unnamed: 14',
+       'Unnamed: 15', 'Unnamed: 16', 'Unnamed: 17', 'Unnamed: 18',
+       'Unnamed: 19', 'Twitter', 'Unnamed: 21', 'Unnamed: 22', 'Unnamed: 23',
+       'Unnamed: 24', 'Unnamed: 25', 'Unnamed: 26', 'Facebook', 'Unnamed: 28']
+    '''media_sheet.loc[-1] = header
+    media_sheet.index +=1
+    media_sheet.sort_index()'''
+
+    inf_sheet.loc[-1] = header
+    inf_sheet.index +=1
+    inf_sheet.sort_index()
+    
+    writer = pandas.ExcelWriter('output.xlsx', engine='xlsxwriter')
+    media_sheet.to_excel(writer,sheet_name='Media Contact')
+    inf_sheet.to_excel(writer,sheet_name='Influencers')
+    writer.save()
+
+
+names = inf_sheet['Influencer Name']
+columns =list( inf_sheet.columns)
+
+def overwrite(sheet,dictionary,name):
+    for column in columns:
+        sheet.loc[sheet['Influencer Name']==dictionary['Influencer Name'],column] = [dictionary[column]]
+
+
+for person in names: # Main Loop
+    person_information = {}
+    for column in columns:
+        value = inf_sheet.loc[inf_sheet[str('Influencer Name')] == str(person)][str(column)].values[0]
+        #print(pandas.isna(value))
+        #if not pandas.isna(value):
+        person_information[str(column)] = value
+        #else:
+         #   person_information[str(column)]='n/a'
+    #inf_sheet.loc[inf_sheet['Influencer Name']] == str(person)
+    youtube_id = person_information['Youtube Link']
+    print(youtube_id)
+    if not pandas.isna(youtube_id):
+        from socialblade import get_youtube_info
+        channel_name = youtube_id.split('/')[4]
+        data = get_youtube_info(channel_name)
+        person_information['Uploads'] = data['youtube-stats-header-uploads']
+        person_information['Subs'] = data['youtube-stats-header-subs']
+        person_information['Views'] = data['youtube-stats-header-views']
+    overwrite(inf_sheet,person_information,str(person))
+print(inf_sheet.head())
+save()
