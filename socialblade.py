@@ -36,24 +36,45 @@ def get_youtube_info(channel_name):
 
 
 def get_twitter_info(username):
-        driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
-        url = 'https://socialblade.com/twitter/user/' + str(username)
-        driver.get(url)
-        html = driver.page_source
-        driver.close()
-        soup = BeautifulSoup(html,'html.parser')
-        #print(soup)
-        #print('lala\n\n\n',soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span'))
-        try:
-            contexts = {
-                'Followers': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[2].contents[0],
-                'Following': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[4].contents[0],
-                'Likes': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[6].contents[0],
-                'Tweets': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[8].contents[0],
-            }
-            print(contexts)
-            return contexts
-        except Exception as e:
-            print('Error: {}\nCouldn\'t update the twitter information of {}'.format(e,username))
-            return 'failed'
+    driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
+    url = 'https://socialblade.com/twitter/user/' + str(username)
+    driver.get(url)
+    html = driver.page_source
+    driver.close()
+    soup = BeautifulSoup(html,'html.parser')
+    #print(soup)
+    #print('lala\n\n\n',soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span'))
+    try:
+        contexts = {
+            'Followers': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[2].contents[0],
+            'Following': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[4].contents[0],
+            'Likes': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[6].contents[0],
+            'Tweets': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[8].contents[0],
+        }
+        print(contexts)
+        return contexts
+    except Exception as e:
+        print('Error: {}\nCouldn\'t update the twitter information of {}'.format(e,username))
+        return 'failed'
 
+def get_instagram_info(username):
+    driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
+    url = 'https://www.instagram.com/' + str(username)
+    driver.get(url)
+    html = driver.page_source
+    driver.close()
+    soup = BeautifulSoup(html,'html.parser')
+    try:
+        lis = soup.find_all('li',{'class':'Y8-fY'})
+        contexts = {
+            'Media Uploads' : lis[0].contents[0].contents[0].contents[0],
+            'Followers' : lis[1].contents[0].contents[0].contents[0],
+            'Following' : lis[2].contents[0].contents[0].contents[0],
+        }
+        print(contexts)
+        return contexts
+    except Exception as e:
+        print('Error: {}'.format(e))
+        print('Couldn\'t update the instagram information of{}'.format(username))
+        return
+    

@@ -54,35 +54,58 @@ for person in names: # Main Loop
 
     youtube_id = person_information['Youtube Link']
     if not pandas.isna(youtube_id):
-        from socialblade import get_youtube_info
-        channel_name = youtube_id.split('/')[4]
-        print('Youtube Channel Name: {}'.format(channel_name))
-        data = get_youtube_info(channel_name)
-        if data != 'failed':
-            person_information['Uploads'] = data['youtube-stats-header-uploads']
-            person_information['Subscribers'] = data['youtube-stats-header-subs']
-            person_information['Video Views'] = data['youtube-stats-header-views']
-
+        try:
+            from socialblade import get_youtube_info
+            channel_name = youtube_id.split('/')[4]
+            print('Youtube Channel Name: {}'.format(channel_name))
+            data = get_youtube_info(channel_name)
+            if data != 'failed':
+                person_information['Uploads'] = data['youtube-stats-header-uploads']
+                person_information['Subscribers'] = data['youtube-stats-header-subs']
+                person_information['Video Views'] = data['youtube-stats-header-views']
+        except Exception as e:
+            print('Error: {}'.format(e))
     
     twitter_link = person_information['Twitter Link']
     if not pandas.isna(twitter_link):
-        #print('twitter_link : {}'.format(twitter_link))
-        words = str(twitter_link).split('/') 
-        if 'twitter.com' in words:
-            ind = words.index('twitter.com')
-        if 'www.twitter.com' in words:
-            ind = words.index('www.twitter.com')
-        username = words[ind+1]
-        print('username: {}'.format(username))
-        from socialblade import get_twitter_info
-        data = get_twitter_info(username)
-        if data != 'failed':
-            index = columns.index('Twitter Link')
-            person_information[columns[index+1]] = data['Followers']
-            person_information[columns[index+2]] = data['Following']
-            person_information[columns[index+3]]= data['Likes']
-            person_information[columns[index+4]]= data['Tweets']
-            
+        try:    
+            #print('twitter_link : {}'.format(twitter_link))
+            words = str(twitter_link).split('/') 
+            if 'twitter.com' in words:
+                ind = words.index('twitter.com')
+            if 'www.twitter.com' in words:
+                ind = words.index('www.twitter.com')
+            username = words[ind+1]
+            print('Twitter Username: {}'.format(username))
+            from socialblade import get_twitter_info
+            data = get_twitter_info(username)
+            if data != 'failed':
+                index = columns.index('Twitter Link')
+                person_information[columns[index+1]] = data['Followers']
+                person_information[columns[index+2]] = data['Following']
+                person_information[columns[index+3]]= data['Likes']
+                person_information[columns[index+4]]= data['Tweets']
+        except Exception as e:
+            print('Error: {}'.format(e))            
+
+    instagram_link = person_information['Instagram Link']
+    if not pandas.isna(instagram_link):
+        try:
+            words = str(instagram_link).split('/')
+            if 'instagram.com' in words:
+                ind = words.index('instagram.com')
+            if 'www.instagram.com' in words:
+                ind = words.index('www.instagram.com')
+            username = words[ind+1]
+            print('Instagram Username: {}'.format(username))
+            from socialblade import get_instagram_info
+            data = get_instagram_info(username)
+            if data != 'failed':
+                person_information['Media Uploads'] = data['Media Uploads']
+                person_information['Followers'] = data['Followers']
+                person_information['Following'] = data['Following']
+        except Exception as e:
+            print('Error: {}'.format(e))
     
     #print(person_information)
     
