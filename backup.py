@@ -1,7 +1,7 @@
 import pandas
+import time
+start = time.time()
 from socialblade import get_instagram_info,get_twitter_info,get_youtube_info
-from time import time
-start = time()
 inf_sheet = pandas.read_excel('excel.xlsx',sheet_name='Influencers')
 media_sheet = pandas.read_excel('excel.xlsx',sheet_name='Media Contacts')
 
@@ -43,7 +43,7 @@ def overwrite(sheet,dictionary,name):
         sheet.loc[sheet['Influencer Name']==dictionary['Influencer Name'],column] = [dictionary[column]]
 
 import threading
-def update_person(person):
+for person in names: # Main Loop
     person_information = {}
     for column in columns:
         value = inf_sheet.loc[inf_sheet[str('Influencer Name')] == str(person)][str(column)].values[0]
@@ -147,30 +147,5 @@ def update_person(person):
 
     overwrite(inf_sheet,person_information,str(person))
 
-
-
-count = 4
-
-person_list_lists = []
-from multiprocessing import Process
-for x in range(len(names)//count+1):
-    temp = []
-    for name in names[x*count:x*count+count]:
-        temp.append(name)
-    person_list_lists.append(temp)
-
-for person_list in person_list_lists:
-    threads = {}
-    for name in person_list:
-        threads[name] =threading.Thread(target=update_person,args=(name,))
-    for name in person_list:
-        threads[name].start()
-    for name in person_list:
-        threads[name].join()
-    save()
-    
-print(time()-start)
-print('count=',count)
-
-#2 188
-#4 178
+save()
+print(time.time()-start)

@@ -2,6 +2,7 @@ import os
 from selenium import webdriver  
 from selenium.webdriver.common.keys import Keys  
 from selenium.webdriver.chrome.options import Options  
+
 from bs4 import BeautifulSoup
 chrome_options = Options()  
 chrome_options.add_argument("--headless")  
@@ -9,7 +10,8 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 caps = DesiredCapabilities().CHROME
 caps["pageLoadStrategy"] = "normal"  
 
-def get_youtube_info(channel_name):
+
+def get_youtube_info(channel_name,dictionary,index='youtube'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = "https://socialblade.com/youtube/channel/"+ str(channel_name)
     driver.get(url)
@@ -23,19 +25,20 @@ def get_youtube_info(channel_name):
             "youtube-stats-header-uploads",
             "youtube-stats-header-subs",
             "youtube-stats-header-views"    ]
-        contexts = {}
+        youtube_contexts = {}
         for span in spans:
             if span.get("id") in spans_wanted_id:
-                contexts[span.get('id')] = span.contents[0]
-        print (contexts)
-        return contexts
+                youtube_contexts[span.get('id')] = span.contents[0]
+        print (youtube_contexts)
+        dictionary[index] = youtube_contexts
+        return youtube_contexts
     except Exception as e:
         print(e)
         print('Couldn\'t update the channel information of {}. Please check your connection.'.format(channel_name))
         return "failed"
 
 
-def get_twitter_info(username):
+def get_twitter_info(username,dictionary,index='twitter'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = 'https://socialblade.com/twitter/user/' + str(username)
     driver.get(url)
@@ -45,19 +48,20 @@ def get_twitter_info(username):
     #print(soup)
     #print('lala\n\n\n',soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span'))
     try:
-        contexts = {
+        twitter_contexts = {
             'Followers': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[2].contents[0],
             'Following': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[4].contents[0],
             'Likes': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[6].contents[0],
             'Tweets': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[8].contents[0],
         }
-        print(contexts)
-        return contexts
+        dictionary[index] = twitter_contexts
+        print(twitter_contexts)
+        return twitter_contexts
     except Exception as e:
         print('Error: {}\nCouldn\'t update the twitter information of {}'.format(e,username))
         return 'failed'
 
-def get_instagram_info(username):
+def get_instagram_info(username,dictionary,index='instagram'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = 'https://www.instagram.com/' + str(username)
     driver.get(url)
@@ -66,15 +70,17 @@ def get_instagram_info(username):
     soup = BeautifulSoup(html,'html.parser')
     try:
         lis = soup.find_all('li',{'class':'Y8-fY'})
-        contexts = {
+        instagram_contexts = {
             'Media Uploads' : lis[0].contents[0].contents[0].contents[0],
             'Followers' : lis[1].contents[0].contents[0].contents[0],
             'Following' : lis[2].contents[0].contents[0].contents[0],
         }
-        print(contexts)
-        return contexts
+        print(instagram_contexts)
+        dictionary[index] = instagram_contexts
+        return instagram_contexts
     except Exception as e:
         print('Error: {}'.format(e))
         print('Couldn\'t update the instagram information of{}'.format(username))
         return
-    
+    ###Get data from twitter instead of socialblade
+    ##Average rt and like
