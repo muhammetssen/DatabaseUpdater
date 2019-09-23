@@ -40,7 +40,52 @@ def get_youtube_info(channel_name,dictionary,index='youtube'):
 
 def get_twitter_info(username,dictionary,index='twitter'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
-    url = 'https://socialblade.com/twitter/user/' + str(username)
+    url = 'https://www.twitter.com/' + str(username)
+    try:
+        driver.get(url)
+        html = driver.page_source
+        driver.close()
+        soup = BeautifulSoup(html,'html.parser')
+        ul_element = (soup.find_all('ul',{'class':'ProfileNav-list'})[0])
+        li_wanted_class = {
+           'ProfileNav-item--tweets' : 'Tweets',
+            'ProfileNav-item--following':'Following',
+            'ProfileNav-item--followers':'Followers',
+            'ProfileNav-item--favorites' :'Likes'
+        }
+        data = {}
+        li_elements = ul_element.find_all('li')[:-3]
+        for li_element in li_elements:
+            for wanted_class in li_wanted_class:
+                if wanted_class in li_element['class']:
+                    data[wanted_class] = (li_element.find('span',{'class':'ProfileNav-value'}))['data-count']
+        twitter_contexts = {}
+        for category in data.keys():
+            twitter_contexts[li_wanted_class[category]] = data[category] 
+        dictionary[index]= twitter_contexts
+        '''
+        spans = soup.find_all('span',{'class':'ProfileNav-value'})
+        twitter_contexts={}
+        cache=[]
+        for span in spans[0:4]:
+            data = span['data-count']
+            if '\n' in data:
+                data = str(data).split('\n')[0]
+            cache.append(data)
+        twitter_contexts['Tweets'] = cache[0]
+        twitter_contexts['Following'] = cache[1]
+        twitter_contexts['Followers'] = cache[2]
+        twitter_contexts['Likes'] = cache[3]
+        dictionary[index]= twitter_contexts
+        '''
+        print(twitter_contexts)
+        return twitter_contexts
+    except Exception as e:
+        print('Error: {}\nCouldn\'t update the twitter information of {}'.format(e,username))
+        return 'failed'
+
+    #For Social Blade
+    '''url = 'https://socialblade.com/twitter/user/' + str(username)
     driver.get(url)
     html = driver.page_source
     driver.close()
@@ -60,7 +105,7 @@ def get_twitter_info(username,dictionary,index='twitter'):
     except Exception as e:
         print('Error: {}\nCouldn\'t update the twitter information of {}'.format(e,username))
         return 'failed'
-
+'''
 def get_instagram_info(username,dictionary,index='instagram'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = 'https://www.instagram.com/' + str(username)
@@ -80,7 +125,6 @@ def get_instagram_info(username,dictionary,index='instagram'):
         return instagram_contexts
     except Exception as e:
         print('Error: {}'.format(e))
-        print('Couldn\'t update the instagram information of{}'.format(username))
-        return
-    ###Get data from twitter instead of socialblade
+        print('Couldn\'t update the instagram information of {}'.format(username))
+        return 'failed'
     ##Average rt and like
