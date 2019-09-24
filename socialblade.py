@@ -49,8 +49,8 @@ def get_twitter_info(username,dictionary,index='twitter'):
         ul_element = (soup.find_all('ul',{'class':'ProfileNav-list'})[0])
         li_wanted_class = {
            'ProfileNav-item--tweets' : 'Tweets',
-            'ProfileNav-item--following':'Following',
-            'ProfileNav-item--followers':'Followers',
+            'ProfileNav-item--following':'Following_t',
+            'ProfileNav-item--followers':'Followers_t',
             'ProfileNav-item--favorites' :'Likes'
         }
         data = {}

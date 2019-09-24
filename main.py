@@ -126,10 +126,12 @@ def update_person(person):
                 #print('twitter_link : {}'.format(twitter_link))
                 #print('Twitter Username: {}'.format(usernames[platform]))
                 #if data != 'failed':
-                person_information['Followers_t'] = data['Followers']
-                person_information['Following_t'] = data['Following']
+                for key in data.keys():
+                    person_information[key] = data[key]
+                '''person_information['Followers_t'] = data['Followers_t']
+                person_information['Following_t'] = data['Following_t']
                 person_information['Likes']= data['Likes']
-                person_information['Tweets']= data['Tweets']
+                person_information['Tweets']= data['Tweets']'''
             except Exception as e:
                 print('Error: {}'.format(e))            
         elif platform =='instagram':
