@@ -1,12 +1,17 @@
 import os  
 from selenium import webdriver  
+
 from selenium.webdriver.common.keys import Keys  
 from selenium.webdriver.chrome.options import Options  
-
+from selenium.webdriver.support.ui import WebDriverWait
 from bs4 import BeautifulSoup
+
+
 chrome_options = Options()  
 chrome_options.add_argument("--headless")  
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+prefs = {"profile.managed_default_content_settings.images": 2}
+chrome_options.add_experimental_option("prefs", prefs)
 caps = DesiredCapabilities().CHROME
 caps["pageLoadStrategy"] = "normal"  
 
@@ -14,9 +19,16 @@ caps["pageLoadStrategy"] = "normal"
 def get_youtube_info(channel_name,dictionary,index='youtube'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = "https://socialblade.com/youtube/channel/"+ str(channel_name)
+    #WebDriverWait(driver,3)
+    #from time import sleep
+    #print('go')
+
+    #JavascriptExecutor js = (JavascriptExecutor) driver;
     driver.get(url)
+    #sleep(2)
     html = driver.page_source
-    driver.close()
+    #driver.execute_script("window.stop()")
+    driver.quit()
     try:
         soup = BeautifulSoup(html,"html.parser")
         div_block = soup.find_all("div",{"id":"YouTubeUserTopInfoBlockTop"})
