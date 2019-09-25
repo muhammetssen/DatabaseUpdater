@@ -17,7 +17,7 @@ chrome_options.add_experimental_option("prefs", prefs)
 caps = DesiredCapabilities().CHROME
 caps["pageLoadStrategy"] = "none"  
 
-load_time = 20
+load_time = 35
 
 def get_youtube_info(channel_name,dictionary,index='youtube'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  

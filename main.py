@@ -1,15 +1,16 @@
+count = 4
 import pandas
 from socialblade import get_instagram_info,get_twitter_info,get_youtube_info
 from time import time
 start = time()
 inf_sheet = pandas.read_excel('excel.xlsx',sheet_name='Influencers')
-media_sheet = pandas.read_excel('excel.xlsx',sheet_name='Media Contacts')
+media_sheet = pandas.read_excel('excel.xlsx',sheet_name='Media Contact')
 
-if inf_sheet.columns[0] != 'Influencer Name':
+if inf_sheet.columns[2] != 'Influencer Name / Brand Name':
     inf_sheet = pandas.read_excel('excel.xlsx',sheet_name='Influencers',skiprows=[0])
 
-if media_sheet.columns[0] != 'Contact Name':
-    media_sheet = pandas.read_excel('excel.xlsx',sheet_name='Media Contacts',skiprows=[0])
+if media_sheet.columns[2] != 'Contact Name':
+    media_sheet = pandas.read_excel('excel.xlsx',sheet_name='Media Contact',skiprows=[0])
     
 
 
@@ -20,7 +21,7 @@ def save():
        'Unnamed: 15', 'Unnamed: 16', 'Unnamed: 17', 'Unnamed: 18',
        'Unnamed: 19', 'Twitter', 'Unnamed: 21', 'Unnamed: 22', 'Unnamed: 23',
        'Unnamed: 24', 'Unnamed: 25', 'Unnamed: 26', 'Facebook', 'Unnamed: 28']
-    '''media_sheet.loc[-1] = pandas.read_excel('excel.xlsx',sheet_name='Media Contacts').columns
+    '''media_sheet.loc[-1] = pandas.read_excel('excel.xlsx',sheet_name='Media Contact').columns
     media_sheet.index +=1
     media_sheet.sort_index()'''
 
@@ -35,24 +36,24 @@ def save():
     return True
 
 
-names = inf_sheet['Influencer Name']
+names = inf_sheet['Influencer Name / Brand Name']
 columns =list( inf_sheet.columns)
 
 def overwrite(sheet,dictionary,name):
     for column in columns:
-        sheet.loc[sheet['Influencer Name']==dictionary['Influencer Name'],column] = [dictionary[column]]
+        sheet.loc[sheet['Influencer Name / Brand Name']==dictionary['Influencer Name / Brand Name'],column] = [dictionary[column]]
 
 import threading
 def update_person(person):
     person_information = {}
     for column in columns:
-        value = inf_sheet.loc[inf_sheet[str('Influencer Name')] == str(person)][str(column)].values[0]
+        value = inf_sheet.loc[inf_sheet[str('Influencer Name / Brand Name')] == str(person)][str(column)].values[0]
         #print(pandas.isna(value))
         #if not pandas.isna(value):
         person_information[str(column)] = value
         #else:
          #   person_information[str(column)]='n/a'
-    #inf_sheet.loc[inf_sheet['Influencer Name']] == str(person)
+    #inf_sheet.loc[inf_sheet['Influencer Name / Brand Name']] == str(person)
 
     usernames = {}
     
@@ -151,7 +152,6 @@ def update_person(person):
 
 
 
-count = 8
 
 person_list_lists = []
 from multiprocessing import Process
