@@ -151,7 +151,7 @@ def update_person(person):
 
 
 
-count = 7
+count = 8
 
 person_list_lists = []
 from multiprocessing import Process

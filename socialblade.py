@@ -4,6 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys  
 from selenium.webdriver.chrome.options import Options  
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
 
@@ -13,21 +15,18 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 prefs = {"profile.managed_default_content_settings.images": 2}
 chrome_options.add_experimental_option("prefs", prefs)
 caps = DesiredCapabilities().CHROME
-caps["pageLoadStrategy"] = "normal"  
+caps["pageLoadStrategy"] = "none"  
 
+load_time = 20
 
 def get_youtube_info(channel_name,dictionary,index='youtube'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = "https://socialblade.com/youtube/channel/"+ str(channel_name)
-    #WebDriverWait(driver,3)
-    #from time import sleep
-    #print('go')
-
-    #JavascriptExecutor js = (JavascriptExecutor) driver;
+    wait = WebDriverWait(driver,load_time) 
     driver.get(url)
-    #sleep(2)
+    wait.until(EC.presence_of_element_located((By.ID,'YouTubeUserTopInfoBlockTop')))
+    driver.execute_script("window.stop()")
     html = driver.page_source
-    #driver.execute_script("window.stop()")
     driver.quit()
     try:
         soup = BeautifulSoup(html,"html.parser")
@@ -53,10 +52,13 @@ def get_youtube_info(channel_name,dictionary,index='youtube'):
 def get_twitter_info(username,dictionary,index='twitter'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = 'https://www.twitter.com/' + str(username)
+    wait = WebDriverWait(driver,load_time) 
+    driver.get(url)
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME,'ProfileNav')))
+    driver.execute_script("window.stop()")        
+    html = driver.page_source
+    driver.quit()
     try:
-        driver.get(url)
-        html = driver.page_source
-        driver.close()
         soup = BeautifulSoup(html,'html.parser')
         ul_element = (soup.find_all('ul',{'class':'ProfileNav-list'})[0])
         li_wanted_class = {
@@ -121,11 +123,14 @@ def get_twitter_info(username,dictionary,index='twitter'):
 def get_instagram_info(username,dictionary,index='instagram'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = 'https://www.instagram.com/' + str(username)
+    wait = WebDriverWait(driver,load_time) 
     driver.get(url)
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME,'k9GMp')))
+    driver.execute_script("window.stop()")
     html = driver.page_source
-    driver.close()
-    soup = BeautifulSoup(html,'html.parser')
+    driver.quit()
     try:
+        soup = BeautifulSoup(html,'html.parser')
         lis = soup.find_all('li',{'class':'Y8-fY'})
         instagram_contexts = {
             'Media Uploads' : lis[0].contents[0].contents[0].contents[0],
