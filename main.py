@@ -123,6 +123,7 @@ def update_person(person):
                 print('Error: {}'.format(e))
         elif platform == 'twitter':
             data = results[platform]
+            
             try:    
                 #print('twitter_link : {}'.format(twitter_link))
                 #print('Twitter Username: {}'.format(usernames[platform]))
