@@ -4,6 +4,7 @@ from socialblade import get_instagram_info,get_twitter_info,get_youtube_info
 from time import time
 start = time()
 inf_sheet = pandas.read_excel('excel.xlsx',sheet_name='Influencers')
+
 media_sheet = pandas.read_excel('excel.xlsx',sheet_name='Media Contact')
 
 if inf_sheet.columns[2] != 'Influencer Name / Brand Name':
@@ -30,8 +31,16 @@ def save():
     inf_sheet.sort_index()
     '''
     writer = pandas.ExcelWriter('output.xlsx', engine='xlsxwriter')
+    #inf_sheet.style.apply("background-color :yellow")  #DataFrame object
     media_sheet.to_excel(writer,sheet_name='Media Contact')
-    inf_sheet.to_excel(writer,sheet_name='Influencers')
+    inf_sheet.style.set_properties(color="yellow",align="right")
+    inf_sheet.to_excel(writer,sheet_name='Influencers',index=False)
+    
+    worksheet= writer.sheets['Influencers']
+
+
+    worksheet.conditional_format('E2:E4',{'type':'3_color_scale'})
+    writer.close()
     writer.save()
     return True
 

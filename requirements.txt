@@ -3,3 +3,6 @@ pandas
 xlwt
 openpyxl
 xlsxwriter
+selenium
+bs4
+jinja2

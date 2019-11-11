@@ -122,8 +122,10 @@ def get_twitter_info(username,dictionary,index='twitter'):
 '''
 def get_instagram_info(username,dictionary,index='instagram'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
-    url = 'https://www.instagram.com/' + str(username)
     wait = WebDriverWait(driver,load_time) 
+
+    
+    url = 'https://www.instagram.com/' + str(username)
     driver.get(url)
     wait.until(EC.presence_of_element_located((By.CLASS_NAME,'k9GMp')))
     driver.execute_script("window.stop()")
@@ -137,6 +139,8 @@ def get_instagram_info(username,dictionary,index='instagram'):
             'Followers' : lis[1].contents[0].contents[0].contents[0],
             'Following' : lis[2].contents[0].contents[0].contents[0],
         }
+
+
         print(instagram_contexts)
         dictionary[index] = instagram_contexts
         return instagram_contexts
