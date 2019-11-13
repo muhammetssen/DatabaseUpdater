@@ -1,4 +1,4 @@
-count = 4
+count = 1
 import pandas
 from socialblade import get_instagram_info,get_twitter_info,get_youtube_info
 from time import time
@@ -86,10 +86,7 @@ def update_person(person):
             usernames['twitter'] = username
         except:
             print('Invalid Twitter Username! Please check the Twitter Username of {}'.format(person))
-
-
-        
-
+    
     instagram_link = person_information['Instagram Link']
     if not pandas.isna(instagram_link):
         try:
@@ -180,6 +177,7 @@ for person_list in person_list_lists:
     for name in person_list:
         threads[name].join()
     save()
+    print("one person")
     
 print(time()-start)
 print('count=',count)

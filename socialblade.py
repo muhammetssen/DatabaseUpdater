@@ -1,5 +1,6 @@
 import os  
 from selenium import webdriver  
+import selenium.webdriver.support.ui as ui
 
 from selenium.webdriver.common.keys import Keys  
 from selenium.webdriver.chrome.options import Options  
@@ -10,14 +11,37 @@ from bs4 import BeautifulSoup
 
 
 chrome_options = Options()  
-chrome_options.add_argument("--headless")  
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 prefs = {"profile.managed_default_content_settings.images": 2}
+#chrome_options.add_argument("user-data-dir=/home/can/.config/google-chrome/database_updater")
+
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--proxy-bypass-list=*")
+
+
+
+
+
+
 chrome_options.add_experimental_option("prefs", prefs)
 caps = DesiredCapabilities().CHROME
 caps["pageLoadStrategy"] = "none"  
 
 load_time = 35
+
+insta_driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
+insta_driver.maximize_window()
+insta_driver.get("https://www.instagram.com/accounts/login/?source=auth_switcher")
+wait = WebDriverWait(insta_driver,load_time) 
+wait.until(EC.presence_of_element_located((By.CLASS_NAME,'HmktE')))
+insta_driver.find_elements_by_name("username")[0].send_keys("buselakalkan")
+insta_driver.find_elements_by_name("password")[0].send_keys("xisthebest2") 
+insta_driver.find_elements_by_tag_name("button")[1].click()
+
+insta_driver.implicitly_wait(5)
+
+
+
 
 def get_youtube_info(channel_name,dictionary,index='youtube'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
@@ -121,16 +145,14 @@ def get_twitter_info(username,dictionary,index='twitter'):
         return 'failed'
 '''
 def get_instagram_info(username,dictionary,index='instagram'):
-    driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
-    wait = WebDriverWait(driver,load_time) 
-
-    
+    #driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
+    wait = WebDriverWait(insta_driver,load_time) 
     url = 'https://www.instagram.com/' + str(username)
-    driver.get(url)
+    insta_driver.get(url)
     wait.until(EC.presence_of_element_located((By.CLASS_NAME,'k9GMp')))
-    driver.execute_script("window.stop()")
-    html = driver.page_source
-    driver.quit()
+    insta_driver.execute_script("window.stop()")
+    html = insta_driver.page_source
+    #driver.quit()
     try:
         soup = BeautifulSoup(html,'html.parser')
         lis = soup.find_all('li',{'class':'Y8-fY'})
