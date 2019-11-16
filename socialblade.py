@@ -1,7 +1,6 @@
 import os  
 from selenium import webdriver  
 import selenium.webdriver.support.ui as ui
-
 from selenium.webdriver.common.keys import Keys  
 from selenium.webdriver.chrome.options import Options  
 from selenium.webdriver.support.ui import WebDriverWait
@@ -9,26 +8,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
-
 chrome_options = Options()  
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 prefs = {"profile.managed_default_content_settings.images": 2}
-#chrome_options.add_argument("user-data-dir=/home/can/.config/google-chrome/database_updater")
-
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--proxy-bypass-list=*")
-
-
-
-
-
-
 chrome_options.add_experimental_option("prefs", prefs)
 caps = DesiredCapabilities().CHROME
 caps["pageLoadStrategy"] = "none"  
-
-load_time = 35
-
+load_time = 5
 insta_driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
 insta_driver.maximize_window()
 insta_driver.get("https://www.instagram.com/accounts/login/?source=auth_switcher")
@@ -37,11 +25,7 @@ wait.until(EC.presence_of_element_located((By.CLASS_NAME,'HmktE')))
 insta_driver.find_elements_by_name("username")[0].send_keys("buselakalkan")
 insta_driver.find_elements_by_name("password")[0].send_keys("xisthebest2") 
 insta_driver.find_elements_by_tag_name("button")[1].click()
-
 insta_driver.implicitly_wait(5)
-
-
-
 
 def get_youtube_info(channel_name,dictionary={},index='youtube'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
@@ -101,49 +85,13 @@ def get_twitter_info(username,dictionary={},index='twitter'):
         for category in data.keys():
             twitter_contexts[li_wanted_class[category]] = data[category] 
         dictionary[index]= twitter_contexts
-        '''
-        spans = soup.find_all('span',{'class':'ProfileNav-value'})
-        twitter_contexts={}
-        cache=[]
-        for span in spans[0:4]:
-            data = span['data-count']
-            if '\n' in data:
-                data = str(data).split('\n')[0]
-            cache.append(data)
-        twitter_contexts['Tweets'] = cache[0]
-        twitter_contexts['Following'] = cache[1]
-        twitter_contexts['Followers'] = cache[2]
-        twitter_contexts['Likes'] = cache[3]
-        dictionary[index]= twitter_contexts
-        '''
         print(twitter_contexts)
         return twitter_contexts
     except Exception as e:
         print('Error: {}\nCouldn\'t update the twitter information of {}'.format(e,username))
         return 'failed'
 
-    #For Social Blade
-    '''url = 'https://socialblade.com/twitter/user/' + str(username)
-    driver.get(url)
-    html = driver.page_source
-    driver.close()
-    soup = BeautifulSoup(html,'html.parser')
-    #print(soup)
-    #print('lala\n\n\n',soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span'))
-    try:
-        twitter_contexts = {
-            'Followers': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[2].contents[0],
-            'Following': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[4].contents[0],
-            'Likes': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[6].contents[0],
-            'Tweets': soup.find_all('div',{'id':'YouTubeUserTopInfoBlock'})[0].find_all('span')[8].contents[0],
-        }
-        dictionary[index] = twitter_contexts
-        print(twitter_contexts)
-        return twitter_contexts
-    except Exception as e:
-        print('Error: {}\nCouldn\'t update the twitter information of {}'.format(e,username))
-        return 'failed'
-'''
+
 def get_instagram_info(username,dictionary={},index='instagram'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     wait = WebDriverWait(insta_driver,load_time) 
@@ -162,8 +110,6 @@ def get_instagram_info(username,dictionary={},index='instagram'):
             'Followers' : lis[1].contents[0].contents[0].contents[0],
             'Following' : lis[2].contents[0].contents[0].contents[0],
         }
-
-
         print(instagram_contexts)
         dictionary[index] = instagram_contexts
         return instagram_contexts
