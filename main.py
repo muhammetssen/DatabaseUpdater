@@ -2,6 +2,13 @@ count = 1
 import pandas
 from socialblade import get_instagram_info,get_twitter_info,get_youtube_info
 from time import time
+import sys
+
+is_youtube = True if "youtube" in sys.argv else False
+is_twitter = True if "twitter" in sys.argv else False
+is_instagram = True if "instagram" in sys.argv else False
+
+
 start = time()
 inf_sheet = pandas.read_excel('excel.xlsx',sheet_name='Influencers')
 
@@ -30,16 +37,14 @@ def save():
     inf_sheet.index +=1
     inf_sheet.sort_index()
     '''
-    writer = pandas.ExcelWriter('output.xlsx', engine='xlsxwriter')
+    inf_sheet.style.set_properties(**{"color":"#ff0000"})
+    writer = pandas.ExcelWriter('output.xlsx', engine='openpyxl')
     #inf_sheet.style.apply("background-color :yellow")  #DataFrame object
     media_sheet.to_excel(writer,sheet_name='Media Contact')
-    inf_sheet.style.set_properties(color="yellow",align="right")
     inf_sheet.to_excel(writer,sheet_name='Influencers',index=False)
-    
-    worksheet= writer.sheets['Influencers']
-
-
-    worksheet.conditional_format('E2:E4',{'type':'3_color_scale'})
+#    inf_sheet.style.set_properties(color="yellow",align="right")
+ #   inf_sheet.style.apply()
+#    worksheet.conditional_format('E2:E4',{'type':'3_color_scale'})
     writer.close()
     writer.save()
     return True
@@ -65,17 +70,19 @@ def update_person(person):
     #inf_sheet.loc[inf_sheet['Influencer Name / Brand Name']] == str(person)
 
     usernames = {}
+    results = {}
     
     youtube_id = person_information['Youtube Link']
-    if not pandas.isna(youtube_id):
+    if not pandas.isna(youtube_id) and is_youtube:
         try:
             channel_name = youtube_id.split('/')[4]
             usernames['youtube'] = channel_name
+            #results{"youtube"} = get_youtube_info()
         except:
             print('Invalid Youtube URL! Please check the Youtube URL of {}'.format(person))
 
     twitter_link = person_information['Twitter Link'] 
-    if not pandas.isna(twitter_link):
+    if not pandas.isna(twitter_link) and is_twitter:
         try:
             words = str(twitter_link).split('/') 
             if 'twitter.com' in words:
@@ -88,7 +95,7 @@ def update_person(person):
             print('Invalid Twitter Username! Please check the Twitter Username of {}'.format(person))
     
     instagram_link = person_information['Instagram Link']
-    if not pandas.isna(instagram_link):
+    if not pandas.isna(instagram_link) and is_instagram:
         try:
             words = str(instagram_link).split('/')
             if 'instagram.com' in words:
@@ -101,7 +108,6 @@ def update_person(person):
             print('Invalid Instagram Username! Please check the Instagram Username of {}'.format(person))
         
     
-    results = {}
     threads = {}
     functions = {
         'instagram':get_instagram_info,
@@ -114,10 +120,11 @@ def update_person(person):
         threads[thread].start()
     for thread in threads.keys():
         threads[thread].join()
-    #print(results)
+    print(results)
     #print(usernames)
     for platform in usernames.keys():
-        if platform == 'youtube':
+
+        if platform == 'youtube' :
             data = results[platform]
             try:
                 #print('Youtube Channel Name: {}'.format(usernames['youtube']))
@@ -127,7 +134,7 @@ def update_person(person):
                 person_information['Video Views'] = data['youtube-stats-header-views']
             except Exception as e:
                 print('Error: {}'.format(e))
-        elif platform == 'twitter':
+        elif platform == 'twitter' :
             data = results[platform]
             
             try:    
@@ -142,7 +149,7 @@ def update_person(person):
                 person_information['Tweets']= data['Tweets']'''
             except Exception as e:
                 print('Error: {}'.format(e))            
-        elif platform =='instagram':
+        elif platform =='instagram' :
             data = results[platform]
             try:
                 #print('Instagram Username: {}'.format(usernames[platform]))

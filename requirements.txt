@@ -6,3 +6,4 @@ xlsxwriter
 selenium
 bs4
 jinja2
+matplotlib

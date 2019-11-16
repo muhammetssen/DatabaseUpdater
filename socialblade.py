@@ -145,13 +145,14 @@ def get_twitter_info(username,dictionary,index='twitter'):
         return 'failed'
 '''
 def get_instagram_info(username,dictionary,index='instagram'):
-    #driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
+    driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     wait = WebDriverWait(insta_driver,load_time) 
     url = 'https://www.instagram.com/' + str(username)
     insta_driver.get(url)
     wait.until(EC.presence_of_element_located((By.CLASS_NAME,'k9GMp')))
     insta_driver.execute_script("window.stop()")
     html = insta_driver.page_source
+    insta_driver.get("https://google.com")
     #driver.quit()
     try:
         soup = BeautifulSoup(html,'html.parser')
