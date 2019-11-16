@@ -43,7 +43,7 @@ insta_driver.implicitly_wait(5)
 
 
 
-def get_youtube_info(channel_name,dictionary,index='youtube'):
+def get_youtube_info(channel_name,dictionary={},index='youtube'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = "https://socialblade.com/youtube/channel/"+ str(channel_name)
     wait = WebDriverWait(driver,load_time) 
@@ -73,7 +73,7 @@ def get_youtube_info(channel_name,dictionary,index='youtube'):
         return "failed"
 
 
-def get_twitter_info(username,dictionary,index='twitter'):
+def get_twitter_info(username,dictionary={},index='twitter'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     url = 'https://www.twitter.com/' + str(username)
     wait = WebDriverWait(driver,load_time) 
@@ -144,7 +144,7 @@ def get_twitter_info(username,dictionary,index='twitter'):
         print('Error: {}\nCouldn\'t update the twitter information of {}'.format(e,username))
         return 'failed'
 '''
-def get_instagram_info(username,dictionary,index='instagram'):
+def get_instagram_info(username,dictionary={},index='instagram'):
     driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver"), desired_capabilities=caps,  chrome_options=chrome_options)  
     wait = WebDriverWait(insta_driver,load_time) 
     url = 'https://www.instagram.com/' + str(username)

@@ -77,7 +77,7 @@ def update_person(person):
         try:
             channel_name = youtube_id.split('/')[4]
             usernames['youtube'] = channel_name
-            #results{"youtube"} = get_youtube_info()
+            #results['youtube']=  get_youtube_info(channel_name)
         except:
             print('Invalid Youtube URL! Please check the Youtube URL of {}'.format(person))
 
@@ -91,6 +91,7 @@ def update_person(person):
                 ind = words.index('www.twitter.com')
             username = words[ind+1]
             usernames['twitter'] = username
+            #results['twitter'] = get_twitter_info(username)
         except:
             print('Invalid Twitter Username! Please check the Twitter Username of {}'.format(person))
     
@@ -104,6 +105,7 @@ def update_person(person):
                 ind = words.index('www.instagram.com')
             username = words[ind+1]
             usernames['instagram'] = username
+            #results['instagram'] = get_instagram_info(username)
         except:
             print('Invalid Instagram Username! Please check the Instagram Username of {}'.format(person))
         
@@ -120,13 +122,12 @@ def update_person(person):
         threads[thread].start()
     for thread in threads.keys():
         threads[thread].join()
-    print(results)
     #print(usernames)
     for platform in usernames.keys():
 
         if platform == 'youtube' :
-            data = results[platform]
             try:
+                data = results[platform]
                 #print('Youtube Channel Name: {}'.format(usernames['youtube']))
                 #if data != 'failed':
                 person_information['Uploads'] = data['youtube-stats-header-uploads']
@@ -135,23 +136,19 @@ def update_person(person):
             except Exception as e:
                 print('Error: {}'.format(e))
         elif platform == 'twitter' :
-            data = results[platform]
             
             try:    
+                data = results[platform]
                 #print('twitter_link : {}'.format(twitter_link))
                 #print('Twitter Username: {}'.format(usernames[platform]))
                 #if data != 'failed':
                 for key in data.keys():
                     person_information[key] = data[key]
-                '''person_information['Followers_t'] = data['Followers_t']
-                person_information['Following_t'] = data['Following_t']
-                person_information['Likes']= data['Likes']
-                person_information['Tweets']= data['Tweets']'''
             except Exception as e:
                 print('Error: {}'.format(e))            
         elif platform =='instagram' :
-            data = results[platform]
             try:
+                data = results[platform]
                 #print('Instagram Username: {}'.format(usernames[platform]))
                 #if data != 'failed':
                 person_information['Media Uploads'] = data['Media Uploads']
@@ -170,21 +167,14 @@ def update_person(person):
 person_list_lists = []
 from multiprocessing import Process
 for x in range(len(names)//count+1):
-    temp = []
     for name in names[x*count:x*count+count]:
-        temp.append(name)
-    person_list_lists.append(temp)
+        person_list_lists.append(name)
+        #temp.append(name)
 
 for person_list in person_list_lists:
-    threads = {}
-    for name in person_list:
-        threads[name] =threading.Thread(target=update_person,args=(name,))
-    for name in person_list:
-        threads[name].start()
-    for name in person_list:
-        threads[name].join()
+    print(person_list_lists.index(person_list),'/',len(person_list_lists),'\t',person_list)
+    update_person(person_list)
     save()
-    print("one person")
     
 print(time()-start)
 print('count=',count)
