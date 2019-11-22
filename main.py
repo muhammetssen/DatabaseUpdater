@@ -21,9 +21,11 @@ if media_sheet.columns[2] != 'Contact Name':
     media_sheet = pandas.read_excel('excel.xlsx',sheet_name='Media Contact',skiprows=[0])
     
 
+import datetime
 
 def save():
-    writer = pandas.ExcelWriter('output.xlsx', engine='openpyxl')
+    name = str(datetime.date.today()) + " tablo.xlsx"
+    writer = pandas.ExcelWriter(name, engine='openpyxl')
     media_sheet.to_excel(writer,sheet_name='Media Contact')
     inf_sheet.to_excel(writer,sheet_name='Influencers',index=False)
     writer.close()
